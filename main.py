@@ -1,0 +1,3 @@
+import halalLabirintus
+
+halalLabirintus.vasarlas()
