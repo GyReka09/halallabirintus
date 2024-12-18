@@ -6,81 +6,72 @@ max_aru = 5
 valFel = []
 bolygok = ["Ydalir", "Vidar", "Folkvang"]
 
-print(f"Üdvözlünk a {bolygo} bolygón! \n\t")
-print("üzemanyag, felszerelés, áru")
-termek = ""
-while (termek != "semmit"):
-    felszerelesek = ["dokkoló egység", "tolmácsgép", "konténer"]
-    valaszthatoAru = ["üzemanyag", "felszerelés","áru"]
-    termek = input("Mit szeretnél vásárolni?:")
-    while not termek in valaszthatoAru:
-            termek = input(" Ilyen kategória nincs! Mit szeretnél vásárolni?:")
-            if termek == "felszerelés":
-                print(f"Elérhető felszereléseink:{felszerelesek}")
-                valasztott = input("Melyiket választod?:")
-                while not(valasztott in felszerelesek):
-                    print("Ilyenünk nincs sajnos")
-                    valasztott = input("Melyiket választod?:")
-                    if valasztott == "konténer":
-                        if 0 < kredit - 3:
-                            kredit -= 3
-                            valFel.append(valasztott)
-                        else:
-                            print("Nincs rá pénzed!")
-                    if valasztott == "dokkoló egység":
-                        if 0 < kredit - 10:
-                            kredit -= 10
-                            valFel.append(valasztott)
-                        else:
-                            print("Nincs rá pénzed!")
-                    if valasztott == "tolmácsgép":
-                        if 0 < kredit - 5:
-                            kredit -= 5
-                            valFel.append(valasztott)
-                        else:
-                            print("Nincs rá pénzed!")
-                if valasztott in valFel and valasztott != "konténer":
-                    felszerelesek.remove(valasztott)
+print(f"Üdvözlünk a {bolygo} bolygón!\n")
+print("Elérhető termékek: üzemanyag, felszerelés, áru")
 
-          
-            if termek == "üzemanyag":
-                    menny = input("Fél vagy tele tank?:")
-                    if menny == "fél":
-                        menny = 0.5
-                    elif menny == "tele":
-                        menny = 1
-                    if 1 < menny + tank:
-                        print("Már tele van a tankod, nem vásárolhatsz üzemanyagot!")
-                        tank == tank
-                    elif kredit - (menny * 2)  < 0:
-                        print("Nincs rá pénzed, nem vásárolhatsz.")
-                    else:
-                        tank + menny == tank
-                        kredit = kredit - (menny * 2)
-            if termek == "áru":
-                    aruMenny = int(input("Mennyi árut szeretnél vásárolni?:"))
-                    if max_aru < aruMenny + aru:
-                        print("Bocsi, ennyi áru nem fér el nálad. Adj meg másik mennyiséget, vagy vásárolj mást!")
-                        aruMenny = int(input("Mennyi árut szeretnél vásárolni?:"))
-                    else: aru += aruMenny
-print("Ydalir/Vidar/Folkvang")
-utazas = input("Hová szeretnél utazni?:")
-while not(utazas in bolygok):
-        print("Ilyen bolygó nincsen, válassz másikat!")
-        utazas = input("Hová szeretnél utazni?:")
-while(bolygo == "Folkvang" and utazas != "Vidar"):
-            print("Ide nem mehetsz bolond, túl messze van. Válassz másikat!")
-            utazas = input("Hová szeretnél utazni?:")
-if utazas == "Ydalir":
-        if bolygo == "Thorodin":
-            if 0.4 < tank:
-                bolygo == "Ydalir"
+felszerelesek = ["dokkoló egység", "tolmácsgép", "konténer"]
+
+while True:
+    termek = input("Mit szeretnél vásárolni (semmit, ha nem vásárolsz)? ").lower()
+    if termek == "semmit":
+        break
+
+    if termek == "felszerelés":
+        print(f"Elérhető felszerelések: {', '.join(felszerelesek)}")
+        valasztott = input("Melyiket választod? ").lower()
+        if valasztott in felszerelesek:
+            arak = {"dokkoló egység": 10, "tolmácsgép": 5, "konténer": 3}
+            if kredit >= arak[valasztott]:
+                kredit -= arak[valasztott]
+                valFel.append(valasztott)
+                felszerelesek.remove(valasztott)
+                print(f"Sikeresen megvásároltad a(z) {valasztott}-t.")
             else:
-                print("Üres a tank bolond, előbb tankoljál.")
-        if bolygo == "Vidar":
-            if 0.4 < tank:
-                bolygo == "Ydalir"
+                print("Nincs elég kredited.")
+        else:
+            print("Ilyen felszerelés nincs.")
 
+    elif termek == "üzemanyag":
+        menny = input("Fél vagy tele tank? (fél/tele): ").lower()
+        if menny == "fél":
+            menny = 0.5
+        elif menny == "tele":
+            menny = 1.0
+        else:
+            print("Érvénytelen választás.")
+            continue
 
+        if tank + menny > 1.0:
+            print("Már tele van a tankod!")
+        elif kredit >= menny * 2:
+            tank += menny
+            kredit -= menny * 2
+            print("Üzemanyag vásárlása sikeres.")
+        else:
+            print("Nincs elég kredited.")
 
+    elif termek == "áru":
+        try:
+            aruMenny = int(input("Mennyi árut szeretnél vásárolni? "))
+            if aru + aruMenny <= max_aru:
+                aru += aruMenny
+                print(f"Sikeresen vásároltál {aruMenny} egység árut.")
+            else:
+                print("Nem fér el nálad ennyi áru.")
+        except ValueError:
+            print("Kérlek számot adj meg!")
 
+    else:
+        print("Ilyen kategória nincs!")
+
+print("\nElérhető bolygók: Ydalir, Vidar, Folkvang")
+utazas = input("Hová szeretnél utazni? ").capitalize()
+
+if utazas in bolygok:
+    if bolygo == "Thorodin" and utazas == "Ydalir" and tank >= 0.4:
+        bolygo = utazas
+        print(f"Sikeresen megérkeztél {bolygo}-ra.")
+    else:
+        print("Nem tudsz oda utazni.")
+else:
+    print("Ilyen bolygó nincs.")
